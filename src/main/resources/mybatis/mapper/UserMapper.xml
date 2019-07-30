@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DOD Config 3.0//EN"
+        "http://mybatis.org/schema/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lfy.springbootshiro.dao.UserMapper">
+
+    <select id="findByUserName" parameterType="String" resultMap="user" >
+        select u.id u_id,username,password,r.id r_id ,rolename ,roledesc , p.id p_id ,modelname,permission from sysuser u
+        INNER JOIN user_role ur on u.id = ur.uid
+        INNER JOIN sysrole r ON ur.rid = r.id
+        INNER JOIN role_permission rp ON r.id = rp.rid
+        INNER JOIN syspermission p on rp.pid = p.id
+        where u.username = #{name}
+    </select>
+
+    <resultMap id="user" type="com.lfy.springbootshiro.bean.SysUser">
+        <id property="id" column="u_id"></id>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <collection property="roleList" javaType="java.util.List" ofType="com.lfy.springbootshiro.bean.SysRole">
+            <id property="id" column="r_id"/>
+            <result property="rolename" column="rolename"/>
+            <result property="roledesc" column="roledesc"/>
+            <collection property="permissions" javaType="java.util.List" ofType="com.lfy.springbootshiro.bean.SysPermission">
+                <id property="id" column="p_id"/>
+                <result property="modelname" column="modelname"/>
+                <result property="permission" column="permission"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+</mapper>
